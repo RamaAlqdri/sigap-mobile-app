@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
     ];
 
     return SigapScaffold(
-      appBar: const SigapAppBar(title: 'SIGAP'),
+      appBar: const SigapAppBar(title: ''),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

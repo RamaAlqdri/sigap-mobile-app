@@ -11,25 +11,23 @@ class SigapAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(88);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Row(
+      toolbarHeight: preferredSize.height,
+      title: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
             'assets/images/text_icon.png',
-            height: 28,
+            height: 64,
           ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              title,
-              overflow: TextOverflow.ellipsis,
-            ),
+          const SizedBox(height: 6),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ],
       ),
