@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'app_state.dart';
 import 'models/consultation_session.dart';
 import 'models/medicine.dart';
+import 'screens/change_password_screen.dart';
+import 'screens/device_management_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/intro_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/medicine_detail_screen.dart';
 import 'screens/prescription_detail_screen.dart';
+import 'screens/profile_edit_screen.dart';
 import 'screens/register_screen.dart';
 
 const Color kBackgroundColor = Color(0xFFECF4E8);
@@ -127,6 +130,10 @@ class _SigapAppState extends State<SigapApp> {
           LoginScreen.routeName: (_) => const LoginScreen(),
           RegisterScreen.routeName: (_) => const RegisterScreen(),
           HomeScreen.routeName: (_) => const HomeScreen(),
+          ProfileEditScreen.routeName: (_) => const ProfileEditScreen(),
+          ChangePasswordScreen.routeName: (_) => const ChangePasswordScreen(),
+          DeviceManagementScreen.routeName: (_) =>
+              const DeviceManagementScreen(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == PrescriptionDetailScreen.routeName) {

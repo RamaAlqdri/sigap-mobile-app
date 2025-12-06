@@ -3,13 +3,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../app_state.dart';
 import '../models/doctor.dart';
-import '../models/user.dart';
-import '../utils/validators.dart';
 import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
+import 'change_password_screen.dart';
+import 'device_management_screen.dart';
 import 'login_screen.dart';
 import 'medicine_detail_screen.dart';
 import 'prescription_detail_screen.dart';
+import 'profile_edit_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -133,7 +134,13 @@ class _DoctorsTabState extends State<_DoctorsTab> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
+        Text(
+          'Selamat datang di SIGAP',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: 12),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -544,7 +551,7 @@ class _ResepTabState extends State<_ResepTab> {
                                       .textTheme
                                       .titleMedium,
                                 ),
-                                Text('Konsultasi • ${session.formattedDate}'),
+                                Text('Konsultasi - ${session.formattedDate}'),
                               ],
                             ),
                           ),
@@ -569,117 +576,8 @@ class _ResepTabState extends State<_ResepTab> {
   }
 }
 
-class _ProfileSettingsTab extends StatefulWidget {
+class _ProfileSettingsTab extends StatelessWidget {
   const _ProfileSettingsTab();
-
-  @override
-  State<_ProfileSettingsTab> createState() => _ProfileSettingsTabState();
-}
-
-class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _oldPasswordController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
-  User? _lastUser;
-
-  final List<Map<String, String>> _devices = const [
-    {'name': 'Perangkat ini', 'lastLogin': 'Hari ini'},
-    {'name': 'Perangkat lain', 'lastLogin': 'Kemarin'},
-    {'name': 'Tablet keluarga', 'lastLogin': '3 hari lalu'},
-  ];
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _oldPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final appState = AppStateScope.of(context);
-    final user = appState.currentUser ?? appState.registeredUser;
-    if (user != null && user != _lastUser) {
-      _lastUser = user;
-      _nameController.text = user.name;
-      _emailController.text = user.email;
-      _phoneController.text = user.phone;
-    }
-  }
-
-  void _saveProfile() {
-    final appState = AppStateScope.of(context);
-    final name = _nameController.text.trim();
-    final emailError = Validators.validateEmail(_emailController.text);
-    final phoneError = Validators.validatePhone(_phoneController.text);
-
-    String? errorMessage;
-    if (name.isEmpty) {
-      errorMessage = 'Nama wajib diisi';
-    } else if (emailError != null) {
-      errorMessage = emailError;
-    } else if (phoneError != null) {
-      errorMessage = phoneError;
-    }
-
-    if (errorMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-      return;
-    }
-
-    appState.updateProfile(
-      name: name,
-      email: _emailController.text.trim(),
-      phone: _phoneController.text.trim(),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profil berhasil diperbarui.')),
-    );
-  }
-
-  void _handleChangePassword() {
-    if (_newPasswordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Konfirmasi kata sandi baru tidak cocok.')),
-      );
-      return;
-    }
-    final appState = AppStateScope.of(context);
-    final success = appState.changePassword(
-      oldPassword: _oldPasswordController.text,
-      newPassword: _newPasswordController.text,
-    );
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Kata sandi berhasil diubah.')),
-      );
-      _oldPasswordController.clear();
-      _newPasswordController.clear();
-      _confirmPasswordController.clear();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Kata sandi lama tidak sesuai.')),
-      );
-    }
-  }
-
-  void _handleDeviceTap(String name) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Simulasi logout dari $name')),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -715,103 +613,43 @@ class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
           ],
         ),
         const SizedBox(height: 24),
-        _ProfileActionCard(
+        _ProfileActionTile(
           icon: Icons.person_outline,
           title: 'Sunting Profil',
-          subtitle: 'Perbarui nama, email, dan nomor HP',
-          child: Column(
-            children: [
-              _ProfileField(
-                label: 'Nama',
-                controller: _nameController,
-                readOnly: false,
-              ),
-              _ProfileField(
-                label: 'Email',
-                controller: _emailController,
-                readOnly: false,
-              ),
-              _ProfileField(
-                label: 'Nomor HP',
-                controller: _phoneController,
-                readOnly: false,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _saveProfile,
-                  child: const Text('Simpan Profil'),
-                ),
-              ),
-            ],
+          subtitle: 'Perbarui data pribadi kamu',
+          onTap: () => Navigator.pushNamed(
+            context,
+            ProfileEditScreen.routeName,
           ),
         ),
-        const SizedBox(height: 16),
-        _ProfileActionCard(
+        _ProfileActionTile(
           icon: Icons.lock_outline,
           title: 'Kata Sandi',
           subtitle: 'Ganti kata sandi akunmu',
-          child: Column(
-            children: [
-              TextField(
-                controller: _oldPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Kata sandi lama',
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _newPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Kata sandi baru',
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Konfirmasi kata sandi baru',
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _handleChangePassword,
-                  child: const Text('Simpan Kata Sandi'),
-                ),
-              ),
-            ],
+          onTap: () => Navigator.pushNamed(
+            context,
+            ChangePasswordScreen.routeName,
           ),
         ),
-        const SizedBox(height: 16),
-        _ProfileActionCard(
+        _ProfileActionTile(
           icon: Icons.devices_other_outlined,
           title: 'Manajemen Perangkat',
           subtitle: 'Kelola perangkat yang pernah login',
-          child: Column(
-            children: _devices
-                .map(
-                  (device) => ListTile(
-                    leading: const Icon(Icons.devices_outlined),
-                    title: Text(device['name']!),
-                    subtitle: Text('Login terakhir: ${device['lastLogin']}'),
-                    trailing: const Icon(Icons.logout),
-                    onTap: () => _handleDeviceTap(device['name']!),
-                  ),
-                )
-                .toList(),
+          onTap: () => Navigator.pushNamed(
+            context,
+            DeviceManagementScreen.routeName,
           ),
         ),
         const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
-          child: OutlinedButton.icon(
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () {
-              AppStateScope.of(context).logout();
+              appState.logout();
               Navigator.pushReplacementNamed(context, LoginScreen.routeName);
             },
             icon: const Icon(Icons.exit_to_app),
@@ -824,65 +662,28 @@ class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
   }
 }
 
-class _ProfileActionCard extends StatefulWidget {
-  const _ProfileActionCard({
+class _ProfileActionTile extends StatelessWidget {
+  const _ProfileActionTile({
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.child,
+    required this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
-  final Widget child;
-
-  @override
-  State<_ProfileActionCard> createState() => _ProfileActionCardState();
-}
-
-class _ProfileActionCardState extends State<_ProfileActionCard> {
-  bool _expanded = false;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ExpansionTile(
-        leading: Icon(widget.icon),
-        title: Text(widget.title),
-        subtitle: Text(widget.subtitle),
-        initiallyExpanded: _expanded,
-        onExpansionChanged: (value) => setState(() => _expanded = value),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: widget.child,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProfileField extends StatelessWidget {
-  const _ProfileField({
-    required this.label,
-    required this.controller,
-    required this.readOnly,
-  });
-
-  final String label;
-  final TextEditingController controller;
-  final bool readOnly;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        decoration: InputDecoration(labelText: label),
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
       ),
     );
   }
