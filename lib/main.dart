@@ -3,16 +3,11 @@ import 'package:flutter/material.dart';
 import 'app_state.dart';
 import 'models/consultation_session.dart';
 import 'models/medicine.dart';
-import 'screens/consultation_history_screen.dart';
-import 'screens/doctor_list_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/medicine_detail_screen.dart';
 import 'screens/prescription_detail_screen.dart';
-import 'screens/profile_screen.dart';
 import 'screens/register_screen.dart';
-import 'screens/search_screen.dart';
-import 'screens/settings_screen.dart';
 
 const Color kBackgroundColor = Color(0xFFECF4E8);
 const Color kButtonColor = Color(0xFF93BFC7);
@@ -103,12 +98,6 @@ class SigapApp extends StatelessWidget {
           LoginScreen.routeName: (_) => const LoginScreen(),
           RegisterScreen.routeName: (_) => const RegisterScreen(),
           HomeScreen.routeName: (_) => const HomeScreen(),
-          DoctorListScreen.routeName: (_) => const DoctorListScreen(),
-          SearchScreen.routeName: (_) => const SearchScreen(),
-          ConsultationHistoryScreen.routeName: (_) =>
-              const ConsultationHistoryScreen(),
-          ProfileScreen.routeName: (_) => const ProfileScreen(),
-          SettingsScreen.routeName: (_) => const SettingsScreen(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == PrescriptionDetailScreen.routeName) {
