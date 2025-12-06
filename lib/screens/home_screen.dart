@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  static const _pageTitles = ['Beranda', 'Obat', 'Resep', 'Profil'];
+  static const _pageTitles = ['Selamat datang di SIGAP', 'Obat', 'Resep', 'Profil'];
   static const _tabs = [
     _DoctorsTab(),
     _MedicinesTab(),
@@ -130,7 +130,47 @@ class _DoctorsTabState extends State<_DoctorsTab> {
     };
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFCBF3BB),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Halo, ada rencana apa hari ini?',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Yuk, mulai konsultasi hari ini. Kami siap melayani.',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  'assets/images/doctor_vector.png',
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
         TextField(
           controller: _controller,
           decoration: const InputDecoration(
@@ -160,6 +200,18 @@ class _DoctorsTabState extends State<_DoctorsTab> {
           ),
         ),
         const SizedBox(height: 16),
+        
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Dokter Populer',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: const Color(0xFFD56969),
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ),
+        const SizedBox(height: 12),
         Expanded(
           child: doctors.isEmpty
               ? const Center(child: Text('Dokter tidak ditemukan.'))

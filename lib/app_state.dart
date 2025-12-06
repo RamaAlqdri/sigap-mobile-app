@@ -39,6 +39,27 @@ class AppState extends ChangeNotifier {
         whatsappNumber: '+628135791113',
         photoPath: 'assets/images/doctor_placeholder.jpeg',
       ),
+      const Doctor(
+        id: 'd5',
+        name: 'Dr. Fajar Maulana',
+        specialty: 'Kulit dan Kelamin',
+        whatsappNumber: '+628135791113',
+        photoPath: 'assets/images/doctor_placeholder.jpeg',
+      ),
+      const Doctor(
+        id: 'd6',
+        name: 'Dr. Fajar Maulana',
+        specialty: 'Kulit dan Kelamin',
+        whatsappNumber: '+628135791113',
+        photoPath: 'assets/images/doctor_placeholder.jpeg',
+      ),
+      const Doctor(
+        id: 'd7',
+        name: 'Dr. Fajar Maulana',
+        specialty: 'Kulit dan Kelamin',
+        whatsappNumber: '+628135791113',
+        photoPath: 'assets/images/doctor_placeholder.jpeg',
+      ),
     ];
 
     medicines = const [
