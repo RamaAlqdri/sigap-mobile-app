@@ -46,43 +46,66 @@ class AppState extends ChangeNotifier {
         id: 'm1',
         name: 'Paracetamol 500 mg',
         imagePath: 'assets/images/medicine_pain.png',
+        description: 'Obat penurun demam dan pereda nyeri untuk sakit kepala, gigi, dan flu.',
+        usage: 'Dewasa: 1 tablet setiap 6-8 jam setelah makan. Maks 4 tablet/hari.',
       ),
       Medicine(
         id: 'm2',
         name: 'Vitamin C 500 mg',
         imagePath: 'assets/images/medicine_vitamin.png',
+        description: 'Suplemen untuk menjaga daya tahan tubuh dan kesehatan kulit.',
+        usage: '1 tablet setiap pagi setelah sarapan.',
       ),
       Medicine(
         id: 'm3',
         name: 'Ibuprofen 400 mg',
         imagePath: 'assets/images/medicine_pain.png',
+        description: 'Anti inflamasi non steroid untuk nyeri otot, sendi, dan demam.',
+        usage: '1 tablet setiap 8 jam setelah makan. Tidak dianjurkan bagi penderita maag.',
       ),
       Medicine(
         id: 'm4',
         name: 'Amoxicillin 500 mg',
         imagePath: 'assets/images/medicine_general.png',
+        description: 'Antibiotik spektrum luas untuk infeksi bakteri.',
+        usage: '1 kapsul setiap 8 jam. Habiskan sesuai resep dokter.',
       ),
       Medicine(
         id: 'm5',
         name: 'Cetirizine 10 mg',
         imagePath: 'assets/images/medicine_general.png',
+        description: 'Antihistamin untuk meredakan alergi, gatal, dan bersin.',
+        usage: '1 tablet sekali sehari sebelum tidur.',
       ),
       Medicine(
         id: 'm6',
         name: 'Ambroxol 30 mg',
         imagePath: 'assets/images/medicine_general.png',
+        description: 'Mukolitik untuk membantu mengencerkan dahak saat batuk berdahak.',
+        usage: '1 tablet tiga kali sehari setelah makan.',
       ),
       Medicine(
         id: 'm7',
         name: 'Lansoprazole 30 mg',
         imagePath: 'assets/images/medicine_general.png',
+        description: 'Obat penurun asam lambung untuk GERD atau maag.',
+        usage: '1 kapsul sebelum makan pagi selama 14 hari atau sesuai petunjuk dokter.',
       ),
       Medicine(
         id: 'm8',
         name: 'Zinc 20 mg',
         imagePath: 'assets/images/medicine_vitamin.png',
+        description: 'Mineral untuk membantu penyembuhan luka dan meningkatkan imunitas.',
+        usage: '1 tablet setelah makan malam.',
       ),
     ];
+
+    _registeredUser = User(
+      name: 'Pasien SIGAP',
+      email: 'pasien@sigap.app',
+      password: '123456',
+      phone: '+628123456789',
+    );
   }
 
   static final AppState instance = AppState._internal();
@@ -95,7 +118,7 @@ class AppState extends ChangeNotifier {
 
   final List<ConsultationSession> _sessions = [];
   final List<String> _searchHistory = [];
-  final List<String> _clickedMedicines = [];
+  final List<String> _searchedMedicines = [];
   int _searchCount = 0;
 
   User? get currentUser => _currentUser;
@@ -105,7 +128,7 @@ class AppState extends ChangeNotifier {
   List<ConsultationSession> get consultationSessions =>
       List.unmodifiable(_sessions);
   List<String> get searchHistory => List.unmodifiable(_searchHistory);
-  List<String> get clickedMedicines => List.unmodifiable(_clickedMedicines);
+  List<String> get searchedMedicines => List.unmodifiable(_searchedMedicines);
   int get totalSearches => _searchCount;
   String get userAvatarPath => defaultUserAvatarPath;
 
@@ -201,10 +224,16 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void recordClickedMedicine(Medicine medicine) {
-    _clickedMedicines.insert(0, medicine.name);
-    if (_clickedMedicines.length > 5) {
-      _clickedMedicines.removeLast();
+  void recordMedicineResults(List<Medicine> medicines) {
+    if (medicines.isEmpty) {
+      return;
+    }
+    for (final medicine in medicines.take(3)) {
+      _searchedMedicines.remove(medicine.name);
+      _searchedMedicines.insert(0, medicine.name);
+    }
+    if (_searchedMedicines.length > 5) {
+      _searchedMedicines.removeRange(5, _searchedMedicines.length);
     }
     notifyListeners();
   }

@@ -19,12 +19,27 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? _errorMessage;
+  bool _didPrefill = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didPrefill) {
+      return;
+    }
+    final user = AppStateScope.of(context).registeredUser;
+    if (user != null) {
+      _emailController.text = user.email;
+      _passwordController.text = user.password;
+      _didPrefill = true;
+    }
   }
 
   void _handleLogin() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../models/medicine.dart';
+import 'medicine_detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -31,19 +32,14 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _performSearch(String query) {
     final appState = AppStateScope.of(context);
-    appState.recordSearchKeyword(query);
+    final filtered = appState.filterMedicines(query);
+    appState
+      ..recordSearchKeyword(query)
+      ..recordMedicineResults(filtered);
     setState(() {
       _currentQuery = query;
-      _results = appState.filterMedicines(query);
+      _results = filtered;
     });
-  }
-
-  void _handleMedicineTap(Medicine medicine) {
-    final appState = AppStateScope.of(context);
-    appState.recordClickedMedicine(medicine);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${medicine.name} ditambahkan ke riwayat klik.')),
-    );
   }
 
   @override
@@ -84,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Obat yang diklik: ${appState.clickedMedicines.isEmpty ? '-' : appState.clickedMedicines.join(', ')}',
+              'Riwayat obat yang dicari: ${appState.searchedMedicines.isEmpty ? '-' : appState.searchedMedicines.join(', ')}',
             ),
             const SizedBox(height: 16),
             if (_currentQuery.isNotEmpty)
@@ -104,7 +100,13 @@ class _SearchScreenState extends State<SearchScreen> {
                             backgroundImage: AssetImage(medicine.imagePath),
                           ),
                           title: Text(medicine.name),
-                          onTap: () => _handleMedicineTap(medicine),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              MedicineDetailScreen.routeName,
+                              arguments: medicine,
+                            );
+                          },
                           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         );
                       },

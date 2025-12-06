@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'app_state.dart';
 import 'models/consultation_session.dart';
+import 'models/medicine.dart';
 import 'screens/consultation_history_screen.dart';
 import 'screens/doctor_list_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/medicine_detail_screen.dart';
 import 'screens/prescription_detail_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/register_screen.dart';
@@ -98,6 +100,12 @@ class SigapApp extends StatelessWidget {
             final session = settings.arguments as ConsultationSession;
             return MaterialPageRoute(
               builder: (_) => PrescriptionDetailScreen(session: session),
+            );
+          }
+          if (settings.name == MedicineDetailScreen.routeName) {
+            final medicine = settings.arguments as Medicine;
+            return MaterialPageRoute(
+              builder: (_) => MedicineDetailScreen(medicine: medicine),
             );
           }
           return null;
