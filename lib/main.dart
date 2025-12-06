@@ -12,6 +12,9 @@ import 'screens/register_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 
+const Color kBackgroundColor = Color(0xFFECF4E8);
+const Color kButtonColor = Color(0xFF93BFC7);
+
 void main() {
   runApp(const SigapApp());
 }
@@ -21,13 +24,62 @@ class SigapApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final inputBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: const BorderSide(color: Colors.transparent),
+    );
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: kButtonColor,
+    ).copyWith(
+      primary: kButtonColor,
+      secondary: kButtonColor,
+    );
     return AppStateScope(
       notifier: AppState.instance,
       child: MaterialApp(
         title: 'SIGAP',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           useMaterial3: true,
+          colorScheme: colorScheme,
+          scaffoldBackgroundColor: kBackgroundColor,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: kBackgroundColor,
+            surfaceTintColor: Colors.transparent,
+            foregroundColor: Colors.black87,
+            centerTitle: true,
+          ),
+          cardTheme: CardThemeData(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kButtonColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: kButtonColor,
+            ),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            border: inputBorder,
+            enabledBorder: inputBorder,
+            focusedBorder: inputBorder.copyWith(
+              borderSide: const BorderSide(color: kButtonColor),
+            ),
+          ),
         ),
         initialRoute: LoginScreen.routeName,
         routes: {

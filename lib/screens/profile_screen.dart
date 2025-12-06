@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../models/user.dart';
+import '../utils/validators.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -42,10 +43,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _saveProfile() {
     final appState = AppStateScope.of(context);
+    final name = _nameController.text.trim();
+    final emailError = Validators.validateEmail(_emailController.text);
+    final phoneError = Validators.validatePhone(_phoneController.text);
+
+    String? errorMessage;
+    if (name.isEmpty) {
+      errorMessage = 'Nama wajib diisi';
+    } else if (emailError != null) {
+      errorMessage = emailError;
+    } else if (phoneError != null) {
+      errorMessage = phoneError;
+    }
+
+    if (errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+      return;
+    }
+
     appState.updateProfile(
-      name: _nameController.text,
-      email: _emailController.text,
-      phone: _phoneController.text,
+      name: name,
+      email: _emailController.text.trim(),
+      phone: _phoneController.text.trim(),
     );
     setState(() => _isEditing = false);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -125,7 +146,6 @@ class _ProfileField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
         ),
         readOnly: !isEditing,
       ),

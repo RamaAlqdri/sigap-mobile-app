@@ -82,7 +82,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: _oldPasswordController,
               decoration: const InputDecoration(
                 labelText: 'Kata sandi lama',
-                border: OutlineInputBorder(),
               ),
               obscureText: true,
             ),
@@ -91,7 +90,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: _newPasswordController,
               decoration: const InputDecoration(
                 labelText: 'Kata sandi baru',
-                border: OutlineInputBorder(),
               ),
               obscureText: true,
             ),
@@ -100,7 +98,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: _confirmPasswordController,
               decoration: const InputDecoration(
                 labelText: 'Konfirmasi kata sandi baru',
-                border: OutlineInputBorder(),
               ),
               obscureText: true,
             ),

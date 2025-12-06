@@ -65,7 +65,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     controller: _controller,
                     decoration: const InputDecoration(
                       labelText: 'Ketik nama obat',
-                      border: OutlineInputBorder(),
                     ),
                     onSubmitted: _performSearch,
                   ),
