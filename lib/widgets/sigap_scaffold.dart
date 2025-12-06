@@ -35,7 +35,7 @@ class SigapScaffold extends StatelessWidget {
         gradient: LinearGradient(
           colors: [
             Color(0xFFECF4E8),
-            Color(0xFFFCFEFB),
+            Color(0xFFECF4E8),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
