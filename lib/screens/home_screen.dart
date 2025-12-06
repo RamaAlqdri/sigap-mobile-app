@@ -7,6 +7,7 @@ import '../models/user.dart';
 import '../utils/validators.dart';
 import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
+import 'login_screen.dart';
 import 'medicine_detail_screen.dart';
 import 'prescription_detail_screen.dart';
 
@@ -295,16 +296,19 @@ class _MedicinesTabState extends State<_MedicinesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final medicines = AppStateScope.of(context)
-        .medicines
-        .where(
-          (medicine) => medicine.name
-              .toLowerCase()
-              .contains(_query.trim().toLowerCase()),
-        )
-        .toList();
+    final appState = AppStateScope.of(context);
+    final medicines = appState.medicines.where((medicine) {
+      final keywords = _query.trim().toLowerCase();
+      if (keywords.isEmpty) {
+        return true;
+      }
+      return medicine.name.toLowerCase().contains(keywords);
+    }).toList();
+    final searchHistory = appState.clickedMedicines;
+    final suggestions = ['Vitamin', 'Antibiotik', 'Analgesik', 'Suplemen'];
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
           controller: _controller,
@@ -313,49 +317,151 @@ class _MedicinesTabState extends State<_MedicinesTab> {
             prefixIcon: Icon(Icons.search),
           ),
           onChanged: (value) => setState(() => _query = value),
+          onSubmitted: (value) =>
+              appState.recordSearchKeyword(value.trim()),
         ),
-        const SizedBox(height: 16),
-        Expanded(
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 46,
           child: ListView.separated(
-            itemCount: medicines.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            scrollDirection: Axis.horizontal,
+            itemCount: suggestions.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
-              final medicine = medicines[index];
-              return Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(medicine.imagePath),
-                  ),
-                  title: Text(medicine.name),
-                  subtitle: Text(
-                    medicine.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      MedicineDetailScreen.routeName,
-                      arguments: medicine,
-                    );
-                  },
-                  trailing: const Icon(Icons.chevron_right),
-                ),
+              final label = suggestions[index];
+              return ActionChip(
+                avatar: const Icon(Icons.lightbulb_outline, size: 18),
+                label: Text(label),
+                onPressed: () {
+                  setState(() {
+                    _controller.text = label;
+                    _query = label;
+                  });
+                  appState.recordSearchKeyword(label);
+                },
               );
             },
           ),
+        ),
+        if (searchHistory.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(
+            'Riwayat obat yang pernah dibuka: ${searchHistory.join(', ')}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+        const SizedBox(height: 16),
+        Expanded(
+          child: medicines.isEmpty
+              ? const Center(child: Text('Obat tidak ditemukan.'))
+              : ListView.separated(
+                  itemCount: medicines.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final medicine = medicines[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x11000000),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundImage: AssetImage(medicine.imagePath),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(medicine.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                                Text(
+                                  medicine.description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.chevron_right),
+                            onPressed: () {
+                              appState.recordMedicineClick(medicine);
+                              Navigator.pushNamed(
+                                context,
+                                MedicineDetailScreen.routeName,
+                                arguments: medicine,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
         ),
       ],
     );
   }
 }
 
-class _ResepTab extends StatelessWidget {
+class _ResepTab extends StatefulWidget {
   const _ResepTab();
+
+  @override
+  State<_ResepTab> createState() => _ResepTabState();
+}
+
+class _ResepTabState extends State<_ResepTab> {
+  final _searchController = TextEditingController();
+  String _query = '';
+  DateTime? _selectedDate;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final sessions = AppStateScope.of(context).consultationSessions;
+    final filtered = sessions.where((session) {
+      final matchesQuery = session.doctorName
+          .toLowerCase()
+          .contains(_query.trim().toLowerCase());
+      final matchesDate = _selectedDate == null
+          ? true
+          : session.date.year == _selectedDate!.year &&
+              session.date.month == _selectedDate!.month &&
+              session.date.day == _selectedDate!.day;
+      return matchesQuery && matchesDate;
+    }).toList();
+
     if (sessions.isEmpty) {
       return const Center(
         child: Text(
@@ -364,35 +470,101 @@ class _ResepTab extends StatelessWidget {
         ),
       );
     }
-    return ListView.separated(
-      itemCount: sessions.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final session = sessions[index];
-        return Card(
-          child: ListTile(
-            leading: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color:
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.receipt_long),
-            ),
-            title: Text(session.doctorName),
-            subtitle: Text('Konsultasi • ${session.formattedDate}'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                PrescriptionDetailScreen.routeName,
-                arguments: session,
-              );
-            },
+
+    return Column(
+      children: [
+        TextField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            labelText: 'Cari dokter/riwayat resep',
+            prefixIcon: Icon(Icons.search),
           ),
-        );
-      },
+          onChanged: (value) => setState(() => _query = value),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            ElevatedButton.icon(
+              onPressed: () => _pickDate(context),
+              icon: const Icon(Icons.date_range),
+              label: const Text('Filter tanggal'),
+            ),
+            const SizedBox(width: 8),
+            if (_selectedDate != null)
+              InputChip(
+                label: Text(
+                    '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'),
+                onDeleted: () => setState(() => _selectedDate = null),
+              ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: filtered.isEmpty
+              ? const Center(child: Text('Tidak ada resep sesuai filter.'))
+              : ListView.separated(
+                  itemCount: filtered.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final session = filtered[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x11000000),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.receipt_long),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  session.doctorName,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium,
+                                ),
+                                Text('Konsultasi • ${session.formattedDate}'),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.chevron_right),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                PrescriptionDetailScreen.routeName,
+                                arguments: session,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 }
@@ -634,6 +806,19 @@ class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
                 .toList(),
           ),
         ),
+        const SizedBox(height: 16),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () {
+              AppStateScope.of(context).logout();
+              Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+            },
+            icon: const Icon(Icons.exit_to_app),
+            label: const Text('Keluar dari Akun'),
+          ),
+        ),
+        const SizedBox(height: 24),
       ],
     );
   }

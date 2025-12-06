@@ -23,9 +23,13 @@ class MedicineDetailScreen extends StatelessWidget {
             child: ListView(
               children: [
                 Center(
-                  child: CircleAvatar(
-                    radius: 56,
-                    backgroundImage: AssetImage(medicine.imagePath),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      medicine.imagePath,
+                      height: 160,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),

@@ -7,6 +7,7 @@ class ConsultationSession {
     required this.doctorName,
     required this.date,
     required this.items,
+    this.doctorNotes,
   });
 
   final String id;
@@ -14,6 +15,7 @@ class ConsultationSession {
   final String doctorName;
   final DateTime date;
   final List<PrescriptionItem> items;
+  final String? doctorNotes;
 
   String get formattedDate {
     final day = date.day.toString().padLeft(2, '0');

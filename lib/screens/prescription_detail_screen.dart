@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../app_state.dart';
 import '../models/consultation_session.dart';
+import '../models/doctor.dart';
 import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
@@ -36,6 +38,12 @@ class PrescriptionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = AppStateScope.of(context);
+    final Doctor? doctor = appState.doctors
+        .cast<Doctor?>()
+        .firstWhere((doc) => doc?.id == session.doctorId, orElse: () => null);
+    final photoPath = doctor?.photoPath ?? AppState.defaultUserAvatarPath;
+
     return SigapScaffold(
       appBar: const SigapAppBar(title: 'Detail Resep'),
       body: Padding(
@@ -46,15 +54,26 @@ class PrescriptionDetailScreen extends StatelessWidget {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text(
-                      session.doctorName,
-                      style: Theme.of(context).textTheme.titleLarge,
+                    CircleAvatar(
+                      radius: 32,
+                      backgroundImage: AssetImage(photoPath),
                     ),
-                    const SizedBox(height: 4),
-                    Text('Waktu konsultasi: ${session.formattedDate}'),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            session.doctorName,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 4),
+                          Text('Waktu konsultasi: ${session.formattedDate}'),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -74,6 +93,9 @@ class PrescriptionDetailScreen extends StatelessWidget {
                             .colorScheme
                             .primary
                             .withValues(alpha: 0.1),
+                        backgroundImage: const AssetImage(
+                          'assets/images/medicine_general.jpg',
+                        ),
                         child: Text('${index + 1}'),
                       ),
                       title: Text(item.medicineName),
@@ -84,6 +106,24 @@ class PrescriptionDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            if (session.doctorNotes != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Catatan Dokter',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(session.doctorNotes!),
+                    ],
+                  ),
+                ),
+              ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/consultation_session.dart';
 import 'models/doctor.dart';
@@ -133,6 +134,8 @@ class AppState extends ChangeNotifier {
 
   User? _registeredUser;
   User? _currentUser;
+  bool _hasSeenIntro = false;
+  bool _initialized = false;
 
   late final List<Doctor> doctors;
   late final List<Medicine> medicines;
@@ -140,16 +143,20 @@ class AppState extends ChangeNotifier {
   final List<ConsultationSession> _sessions = [];
   final List<String> _searchHistory = [];
   final List<String> _searchedMedicines = [];
+  final List<String> _clickedMedicines = [];
   int _searchCount = 0;
 
   User? get currentUser => _currentUser;
   User? get registeredUser => _registeredUser;
   bool get hasRegisteredUser => _registeredUser != null;
+  bool get hasSeenIntro => _hasSeenIntro;
+  bool get isInitialized => _initialized;
 
   List<ConsultationSession> get consultationSessions =>
       List.unmodifiable(_sessions);
   List<String> get searchHistory => List.unmodifiable(_searchHistory);
   List<String> get searchedMedicines => List.unmodifiable(_searchedMedicines);
+  List<String> get clickedMedicines => List.unmodifiable(_clickedMedicines);
   int get totalSearches => _searchCount;
   String get userAvatarPath => defaultUserAvatarPath;
 
@@ -177,6 +184,26 @@ class AppState extends ChangeNotifier {
   void logout() {
     _currentUser = null;
     notifyListeners();
+  }
+
+  Future<void> ensureInitialized() async {
+    if (_initialized) {
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    _hasSeenIntro = prefs.getBool('hasSeenIntro') ?? false;
+    _initialized = true;
+    notifyListeners();
+  }
+
+  Future<void> markIntroSeen() async {
+    if (_hasSeenIntro) {
+      return;
+    }
+    _hasSeenIntro = true;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasSeenIntro', true);
   }
 
   void updateProfile({
@@ -227,6 +254,8 @@ class AppState extends ChangeNotifier {
       doctorName: doctor.name,
       date: DateTime.now(),
       items: _buildDummyPrescriptionItems(),
+      doctorNotes:
+          'Silakan hubungi kami kembali jika keluhan berlanjut setelah 3 hari.',
     );
     _sessions.insert(0, session);
     notifyListeners();
@@ -255,6 +284,15 @@ class AppState extends ChangeNotifier {
     }
     if (_searchedMedicines.length > 5) {
       _searchedMedicines.removeRange(5, _searchedMedicines.length);
+    }
+    notifyListeners();
+  }
+
+  void recordMedicineClick(Medicine medicine) {
+    _clickedMedicines.remove(medicine.name);
+    _clickedMedicines.insert(0, medicine.name);
+    if (_clickedMedicines.length > 5) {
+      _clickedMedicines.removeLast();
     }
     notifyListeners();
   }

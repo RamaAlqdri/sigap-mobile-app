@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateScope.of(context);
     return SigapScaffold(
-      appBar: const SigapAppBar(title: 'Login'),
+      appBar: const SigapAppBar(title: ''),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth > 600 ? 480.0 : double.infinity;

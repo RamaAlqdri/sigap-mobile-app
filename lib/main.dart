@@ -4,6 +4,7 @@ import 'app_state.dart';
 import 'models/consultation_session.dart';
 import 'models/medicine.dart';
 import 'screens/home_screen.dart';
+import 'screens/intro_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/medicine_detail_screen.dart';
 import 'screens/prescription_detail_screen.dart';
@@ -16,11 +17,36 @@ void main() {
   runApp(const SigapApp());
 }
 
-class SigapApp extends StatelessWidget {
+class SigapApp extends StatefulWidget {
   const SigapApp({super.key});
 
   @override
+  State<SigapApp> createState() => _SigapAppState();
+}
+
+class _SigapAppState extends State<SigapApp> {
+  bool _ready = false;
+
+  @override
+  void initState() {
+    super.initState();
+    AppState.instance.ensureInitialized().then((_) {
+      if (mounted) {
+        setState(() => _ready = true);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_ready) {
+      return const MaterialApp(
+        home: Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
     final inputBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
       borderSide: const BorderSide(color: Colors.transparent),
@@ -93,8 +119,11 @@ class SigapApp extends StatelessWidget {
             backgroundColor: kButtonColor.withValues(alpha: 0.95),
           ),
         ),
-        initialRoute: LoginScreen.routeName,
+        initialRoute: AppState.instance.hasSeenIntro
+            ? LoginScreen.routeName
+            : IntroScreen.routeName,
         routes: {
+          IntroScreen.routeName: (_) => const IntroScreen(),
           LoginScreen.routeName: (_) => const LoginScreen(),
           RegisterScreen.routeName: (_) => const RegisterScreen(),
           HomeScreen.routeName: (_) => const HomeScreen(),
