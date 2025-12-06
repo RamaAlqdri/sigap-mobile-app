@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../app_state.dart';
 import '../models/doctor.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
 class DoctorListScreen extends StatelessWidget {
@@ -42,9 +43,7 @@ class DoctorListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final doctors = AppStateScope.of(context).doctors;
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Daftar Dokter'),
-      ),
+      appBar: const SigapAppBar(title: 'Daftar Dokter'),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemBuilder: (context, index) {

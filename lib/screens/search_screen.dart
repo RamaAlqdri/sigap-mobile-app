@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../models/medicine.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 import 'medicine_detail_screen.dart';
 
@@ -47,9 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateScope.of(context);
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Pencarian Obat'),
-      ),
+      appBar: const SigapAppBar(title: 'Pencarian Obat'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

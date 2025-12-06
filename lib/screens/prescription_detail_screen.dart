@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/consultation_session.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
 class PrescriptionDetailScreen extends StatelessWidget {
@@ -36,9 +37,7 @@ class PrescriptionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Detail Resep'),
-      ),
+      appBar: const SigapAppBar(title: 'Detail Resep'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

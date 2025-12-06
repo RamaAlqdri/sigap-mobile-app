@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../models/consultation_session.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 import 'prescription_detail_screen.dart';
 
@@ -14,9 +15,7 @@ class ConsultationHistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final sessions = AppStateScope.of(context).consultationSessions;
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Keranjang Resep'),
-      ),
+      appBar: const SigapAppBar(title: 'Keranjang Resep'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: sessions.isEmpty

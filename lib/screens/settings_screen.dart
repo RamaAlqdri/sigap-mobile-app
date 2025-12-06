@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_state.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -66,9 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Pengaturan'),
-      ),
+      appBar: const SigapAppBar(title: 'Pengaturan'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

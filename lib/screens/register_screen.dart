@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_state.dart';
 import '../models/user.dart';
 import '../utils/validators.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -61,9 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('SIGAP - Daftar'),
-      ),
+      appBar: const SigapAppBar(title: 'SIGAP - Daftar'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth > 640 ? 540.0 : double.infinity;

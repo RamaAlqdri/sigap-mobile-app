@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../utils/validators.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
@@ -65,9 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateScope.of(context);
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('SIGAP - Login'),
-      ),
+      appBar: const SigapAppBar(title: 'SIGAP - Login'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth > 600 ? 480.0 : double.infinity;

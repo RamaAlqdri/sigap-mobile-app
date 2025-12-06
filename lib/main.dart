@@ -40,6 +40,7 @@ class SigapApp extends StatelessWidget {
       notifier: AppState.instance,
       child: MaterialApp(
         title: 'SIGAP',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: colorScheme,

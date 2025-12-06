@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/medicine.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
 class MedicineDetailScreen extends StatelessWidget {
@@ -13,9 +14,7 @@ class MedicineDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Detail Obat'),
-      ),
+      appBar: const SigapAppBar(title: 'Detail Obat'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Card(

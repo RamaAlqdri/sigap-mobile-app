@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_state.dart';
 import '../models/user.dart';
 import '../utils/validators.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -80,17 +81,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final appState = AppStateScope.of(context);
     final user = appState.currentUser ?? appState.registeredUser;
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('Profil Pengguna'),
-        actions: [
-          if (user != null)
-            IconButton(
-              icon: Icon(_isEditing ? Icons.close : Icons.edit),
-              onPressed: () {
-                setState(() => _isEditing = !_isEditing);
-              },
-            ),
-        ],
+      appBar: SigapAppBar(
+        title: 'Profil Pengguna',
+        actions: user == null
+            ? null
+            : [
+                IconButton(
+                  icon: Icon(_isEditing ? Icons.close : Icons.edit),
+                  onPressed: () {
+                    setState(() => _isEditing = !_isEditing);
+                  },
+                ),
+              ],
       ),
       body: user == null
           ? const Center(

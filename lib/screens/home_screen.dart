@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_state.dart';
+import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 import 'consultation_history_screen.dart';
 import 'doctor_list_screen.dart';
@@ -51,9 +52,7 @@ class HomeScreen extends StatelessWidget {
     ];
 
     return SigapScaffold(
-      appBar: AppBar(
-        title: const Text('SIGAP'),
-      ),
+      appBar: const SigapAppBar(title: 'SIGAP'),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
