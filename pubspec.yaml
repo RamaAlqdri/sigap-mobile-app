@@ -31,9 +31,9 @@ flutter_launcher_icons:
 
 flutter_native_splash:
   color: "#ECF4E8"
-  image: assets/images/launch_icon.png
+  image: assets/images/launch_icon_splash.png
   android_gravity: center
   ios_content_mode: center
   android_12:
     color: "#ECF4E8"
-    image: assets/images/launch_icon.png
+    image: assets/images/launch_icon_splash.png
