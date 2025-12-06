@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  static const _pageTitles = ['Selamat datang di SIGAP', 'Obat', 'Resep', 'Profil'];
+  static const _pageTitles = ['', 'Obat', 'Resep', 'Profil'];
   static const _tabs = [
     _DoctorsTab(),
     _MedicinesTab(),
@@ -36,34 +36,61 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SigapScaffold(
       appBar: SigapAppBar(title: _pageTitles[_currentIndex]),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: _tabs[_currentIndex],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) => setState(() => _currentIndex = index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Beranda',
+      body: _tabs[_currentIndex],
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x22000000),
+                blurRadius: 20,
+                offset: Offset(0, 10),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.medical_information_outlined),
-            label: 'Obat',
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: BottomNavigationBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                currentIndex: _currentIndex,
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: Theme.of(context).colorScheme.primary,
+                unselectedItemColor: Colors.grey,
+                showUnselectedLabels: false,
+                iconSize: 26,
+                onTap: (index) => setState(() => _currentIndex = index),
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home_outlined),
+                    activeIcon: Icon(Icons.home_rounded),
+                    label: 'Beranda',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.medical_information_outlined),
+                    activeIcon: Icon(Icons.medical_services_rounded),
+                    label: 'Obat',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.receipt_long_outlined),
+                    activeIcon: Icon(Icons.receipt_long_rounded),
+                    label: 'Resep',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person_outline),
+                    activeIcon: Icon(Icons.person_rounded),
+                    label: 'Profil',
+                  ),
+                ],
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            label: 'Resep',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profil',
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -79,6 +106,12 @@ class _DoctorsTab extends StatefulWidget {
 class _DoctorsTabState extends State<_DoctorsTab> {
   final _controller = TextEditingController();
   String _query = '';
+  static const _doctorHighlights = [
+    'Respon cepat',
+    '5+ tahun pengalaman',
+    'Rating tinggi',
+    'Direkomendasikan 200+ pasien',
+  ];
 
   @override
   void dispose() {
@@ -228,50 +261,143 @@ class _DoctorsTabState extends State<_DoctorsTab> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final doctor = doctors[index];
+                    final highlight =
+                        _doctorHighlights[index % _doctorHighlights.length];
                     return Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.08),
+                        ),
                         boxShadow: const [
                           BoxShadow(
-                            color: Color(0x11000000),
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
+                            color: Color(0x14000000),
+                            blurRadius: 16,
+                            offset: Offset(0, 8),
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
-                            radius: 28,
-                            backgroundImage: AssetImage(doctor.photoPath),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  doctor.name,
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(18),
+                                child: Image.asset(
+                                  doctor.photoPath,
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover,
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  doctor.specialty,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(color: Colors.grey[700]),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            doctor.name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFECF4E8),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            doctor.specialty,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.verified_outlined,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          highlight,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: const [
+                                        Icon(Icons.schedule, size: 16),
+                                        SizedBox(width: 6),
+                                        Text('08.00 - 21.00 WIB'),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          FilledButton(
-                            onPressed: () => _consultDoctor(context, doctor),
-                            child: const Text('Chat'),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.chat_bubble_outline,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Konsultasi via WhatsApp',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              FilledButton.icon(
+                                onPressed: () =>
+                                    _consultDoctor(context, doctor),
+                                icon: const Icon(Icons.send_rounded),
+                                label: const Text('Chat'),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -294,6 +420,12 @@ class _MedicinesTab extends StatefulWidget {
 class _MedicinesTabState extends State<_MedicinesTab> {
   final _controller = TextEditingController();
   String _query = '';
+  static const _medicineHighlights = [
+    'Best seller',
+    'Favorit keluarga',
+    'Tanpa resep',
+    'Direkomendasikan dokter',
+  ];
 
   @override
   void dispose() {
@@ -366,54 +498,125 @@ class _MedicinesTabState extends State<_MedicinesTab> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final medicine = medicines[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x11000000),
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 24,
-                            backgroundImage: AssetImage(medicine.imagePath),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(medicine.name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium),
-                                Text(
-                                  medicine.description,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                    final highlight =
+                        _medicineHighlights[index % _medicineHighlights.length];
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(24),
+                        onTap: () {
+                          appState.recordMedicineClick(medicine);
+                          Navigator.pushNamed(
+                            context,
+                            MedicineDetailScreen.routeName,
+                            arguments: medicine,
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withValues(alpha: 0.08),
                             ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x14000000),
+                                blurRadius: 16,
+                                offset: Offset(0, 8),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.chevron_right),
-                            onPressed: () {
-                              appState.recordMedicineClick(medicine);
-                              Navigator.pushNamed(
-                                context,
-                                MedicineDetailScreen.routeName,
-                                arguments: medicine,
-                              );
-                            },
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(18),
+                                child: Image.asset(
+                                  medicine.imagePath,
+                                  width: 68,
+                                  height: 68,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            medicine.name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFECF4E8),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            highlight,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      medicine.description,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.local_hospital_outlined,
+                                          size: 18,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'Klik untuk lihat detail aturan pakai',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     );
                   },
@@ -435,6 +638,11 @@ class _ResepTabState extends State<_ResepTab> {
   final _searchController = TextEditingController();
   String _query = '';
   DateTime? _selectedDate;
+  static const _resepBadges = [
+    'Butuh kontrol ulang',
+    'Tindak lanjut selesai',
+    'Resep baru',
+  ];
 
   @override
   void dispose() {
@@ -456,7 +664,11 @@ class _ResepTabState extends State<_ResepTab> {
 
   @override
   Widget build(BuildContext context) {
-    final sessions = AppStateScope.of(context).consultationSessions;
+    final appState = AppStateScope.of(context);
+    final sessions = appState.consultationSessions;
+    final doctorPhotos = {
+      for (final doctor in appState.doctors) doctor.id: doctor.photoPath
+    };
     final filtered = sessions.where((session) {
       final matchesQuery = session.doctorName
           .toLowerCase()
@@ -514,56 +726,138 @@ class _ResepTabState extends State<_ResepTab> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final session = filtered[index];
+                    final badge = _resepBadges[index % _resepBadges.length];
+                    final photoPath = doctorPhotos[session.doctorId] ??
+                        AppState.defaultUserAvatarPath;
                     return Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withValues(alpha: 0.08),
+                        ),
                         boxShadow: const [
                           BoxShadow(
-                            color: Color(0x11000000),
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
+                            color: Color(0x14000000),
+                            blurRadius: 16,
+                            offset: Offset(0, 8),
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.receipt_long),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  session.doctorName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 32,
+                                backgroundImage: AssetImage(photoPath),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            session.doctorName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFECF4E8),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            badge,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      session.formattedDate,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall,
+                                    ),
+                                  ],
                                 ),
-                                Text('Konsultasi - ${session.formattedDate}'),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.chevron_right),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                PrescriptionDetailScreen.routeName,
-                                arguments: session,
-                              );
-                            },
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.medication_outlined,
+                                color:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${session.items.length} obat disarankan dalam sesi ini',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                          if (session.doctorNotes != null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              '"${session.doctorNotes!}"',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ],
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: FilledButton.icon(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(alpha: 0.12),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  PrescriptionDetailScreen.routeName,
+                                  arguments: session,
+                                );
+                              },
+                              icon: const Icon(Icons.visibility_outlined),
+                              label: const Text('Lihat detail'),
+                            ),
                           ),
                         ],
                       ),

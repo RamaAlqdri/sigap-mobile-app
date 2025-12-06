@@ -172,10 +172,10 @@ class MedicineDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _TipsCard(tips: tips),
             const SizedBox(height: 16),
-            // const _DisclaimerCard(
-            //   message:
-            //       'Informasi ini hanya contoh untuk prototipe SIGAP. Selalu konsultasikan dengan dokter terpercaya sebelum mengonsumsi obat apa pun.',
-            // ),
+            const _DisclaimerCard(
+              message:
+                  'Informasi ini hanya contoh untuk prototipe SIGAP. Selalu konsultasikan dengan dokter terpercaya sebelum mengonsumsi obat apa pun.',
+            ),
           ],
         ),
       ),
