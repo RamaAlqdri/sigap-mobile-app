@@ -112,6 +112,7 @@ class _DoctorsTabState extends State<_DoctorsTab> {
     'Rating tinggi',
     'Direkomendasikan 200+ pasien',
   ];
+  static const double _searchHeaderHeight = 172;
 
   @override
   void dispose() {
@@ -148,8 +149,9 @@ class _DoctorsTabState extends State<_DoctorsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final doctors = AppStateScope.of(context)
-        .doctors
+    final theme = Theme.of(context);
+    final appState = AppStateScope.of(context);
+    final doctors = appState.doctors
         .where(
           (doctor) =>
               doctor.name.toLowerCase().contains(_query.toLowerCase()) ||
@@ -164,248 +166,270 @@ class _DoctorsTabState extends State<_DoctorsTab> {
       'Kulit dan Kelamin': Icons.spa_outlined,
     };
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Selamat datang di SIGAP',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+    final slivers = <Widget>[
+      SliverToBoxAdapter(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Selamat datang di SIGAP',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFCBF3BB),
+                borderRadius: BorderRadius.circular(20),
               ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFCBF3BB),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Halo, ada rencana apa hari ini?',
-                      style: Theme.of(context).textTheme.titleMedium,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Halo, ada rencana apa hari ini?',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Yuk, mulai konsultasi hari ini. Kami siap melayani.',
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Yuk, mulai konsultasi hari ini. Kami siap melayani.',
+                  ),
+                  const SizedBox(width: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      'assets/images/doctor_vector.png',
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  'assets/images/doctor_vector.png',
-                  width: 90,
-                  height: 90,
-                  fit: BoxFit.cover,
-                ),
+            ),
+          ],
+        ),
+      ),
+      SliverPersistentHeader(
+        pinned: true,
+        delegate: _StickyHeaderDelegate(
+          minHeight: _searchHeaderHeight,
+          maxHeight: _searchHeaderHeight,
+          child: Container(
+            color: const Color(0xFFECF4E8),
+            child: SizedBox(
+              height: _searchHeaderHeight,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      labelText: 'Cari nama dokter atau spesialisasi',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onChanged: (value) => setState(() => _query = value),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 46,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: specialties.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        final entry = specialties.entries.elementAt(index);
+                        return ActionChip(
+                          avatar: Icon(entry.value, size: 18),
+                          label: Text(entry.key),
+                          onPressed: () => setState(() {
+                            _controller.text = entry.key;
+                            _query = entry.key;
+                          }),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _controller,
-          decoration: const InputDecoration(
-            labelText: 'Cari nama dokter atau spesialisasi',
-            prefixIcon: Icon(Icons.search),
-          ),
-          onChanged: (value) => setState(() => _query = value),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 46,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: specialties.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              final entry = specialties.entries.elementAt(index);
-              return ActionChip(
-                avatar: Icon(entry.value, size: 18),
-                label: Text(entry.key),
-                onPressed: () => setState(() {
-                  _controller.text = entry.key;
-                  _query = entry.key;
-                }),
-              );
-            },
-          ),
-        ),
-        const SizedBox(height: 16),
-        
-        Align(
-          alignment: Alignment.centerLeft,
+      ),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0,0,0,12),
           child: Text(
             'Dokter Populer',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
                   color: const Color(0xFFD56969),
                   fontWeight: FontWeight.w900,
                 ),
           ),
         ),
-        const SizedBox(height: 12),
-        Expanded(
-          child: doctors.isEmpty
-              ? const Center(child: Text('Dokter tidak ditemukan.'))
-              : ListView.separated(
-                  itemCount: doctors.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final doctor = doctors[index];
-                    final highlight =
-                        _doctorHighlights[index % _doctorHighlights.length];
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withValues(alpha: 0.08),
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x14000000),
-                            blurRadius: 16,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
+      ),
+    ];
+
+    if (doctors.isEmpty) {
+      slivers.add(
+        const SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(child: Text('Dokter tidak ditemukan.')),
+        ),
+      );
+    } else {
+      slivers.add(
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final doctor = doctors[index];
+              final highlight =
+                  _doctorHighlights[index % _doctorHighlights.length];
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: index == doctors.length - 1 ? 28 : 16,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x14000000),
+                        blurRadius: 16,
+                        offset: Offset(0, 8),
                       ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(18),
-                                child: Image.asset(
-                                  doctor.photoPath,
-                                  width: 80,
-                                  height: 80,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(18),
+                            child: Image.asset(
+                              doctor.photoPath,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            doctor.name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                          ),
+                                    Expanded(
+                                      child: Text(
+                                        doctor.name,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFECF4E8),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: Text(
-                                            doctor.specialty,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelSmall,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                    const SizedBox(height: 6),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.verified_outlined,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          highlight,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Row(
-                                      children: const [
-                                        Icon(Icons.schedule, size: 16),
-                                        SizedBox(width: 6),
-                                        Text('08.00 - 21.00 WIB'),
-                                      ],
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFECF4E8),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        doctor.specialty,
+                                        style: theme.textTheme.labelSmall,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Row(
+                                const SizedBox(height: 6),
+                                Row(
                                   children: [
                                     Icon(
-                                      Icons.chat_bubble_outline,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
+                                      Icons.verified_outlined,
+                                      color: theme.colorScheme.primary,
                                       size: 18,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      'Konsultasi via WhatsApp',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall,
+                                      highlight,
+                                      style: theme.textTheme.bodySmall,
                                     ),
                                   ],
                                 ),
-                              ),
-                              FilledButton.icon(
-                                onPressed: () =>
-                                    _consultDoctor(context, doctor),
-                                icon: const Icon(Icons.send_rounded),
-                                label: const Text('Chat'),
-                              ),
-                            ],
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: const [
+                                    Icon(Icons.schedule, size: 16),
+                                    SizedBox(width: 6),
+                                    Text('08.00 - 21.00 WIB'),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    );
-                  },
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline,
+                                  color: theme.colorScheme.primary,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Konsultasi via WhatsApp',
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                          ),
+                          FilledButton.icon(
+                            onPressed: () => _consultDoctor(context, doctor),
+                            icon: const Icon(Icons.send_rounded),
+                            label: const Text('Chat'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+              );
+            },
+            childCount: doctors.length,
+          ),
         ),
-      ],
+      );
+    }
+
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: slivers,
     );
   }
 }
@@ -1031,5 +1055,35 @@ class _ProfileActionTile extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _StickyHeaderDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  bool shouldRebuild(covariant _StickyHeaderDelegate oldDelegate) {
+    return minHeight != oldDelegate.minHeight ||
+        maxHeight != oldDelegate.maxHeight ||
+        child != oldDelegate.child;
   }
 }
