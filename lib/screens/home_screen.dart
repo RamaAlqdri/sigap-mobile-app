@@ -122,6 +122,13 @@ class _DoctorsTabState extends State<_DoctorsTab> {
         )
         .toList();
 
+    final specialties = {
+      'Penyakit Dalam': Icons.favorite_outline,
+      'Dokter Umum': Icons.local_hospital_outlined,
+      'Anak': Icons.child_care_outlined,
+      'Kulit dan Kelamin': Icons.spa_outlined,
+    };
+
     return Column(
       children: [
         TextField(
@@ -132,6 +139,26 @@ class _DoctorsTabState extends State<_DoctorsTab> {
           ),
           onChanged: (value) => setState(() => _query = value),
         ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 46,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: specialties.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final entry = specialties.entries.elementAt(index);
+              return ActionChip(
+                avatar: Icon(entry.value, size: 18),
+                label: Text(entry.key),
+                onPressed: () => setState(() {
+                  _controller.text = entry.key;
+                  _query = entry.key;
+                }),
+              );
+            },
+          ),
+        ),
         const SizedBox(height: 16),
         Expanded(
           child: doctors.isEmpty
@@ -141,56 +168,52 @@ class _DoctorsTabState extends State<_DoctorsTab> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final doctor = doctors[index];
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x11000000),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundImage: AssetImage(doctor.photoPath),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage: AssetImage(doctor.photoPath),
+                                Text(
+                                  doctor.name,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        doctor.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
-                                      ),
-                                      Text(
-                                        doctor.specialty,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              color: Colors.grey[700],
-                                            ),
-                                      ),
-                                    ],
-                                  ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  doctor.specialty,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(color: Colors.grey[700]),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton.icon(
-                                onPressed: () =>
-                                    _consultDoctor(context, doctor),
-                                icon: const Icon(Icons.chat_outlined),
-                                label: const Text('WhatsApp'),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          FilledButton(
+                            onPressed: () => _consultDoctor(context, doctor),
+                            child: const Text('Chat'),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -337,7 +360,6 @@ class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  bool _isEditingProfile = false;
   User? _lastUser;
 
   final List<Map<String, String>> _devices = const [
@@ -397,7 +419,7 @@ class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
     );
-    setState(() => _isEditingProfile = false);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Profil berhasil diperbarui.')),
     );
@@ -445,120 +467,159 @@ class _ProfileSettingsTabState extends State<_ProfileSettingsTab> {
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        children: [
-          Row(
+    return ListView(
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 32,
+              backgroundImage: AssetImage(AppState.defaultUserAvatarPath),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Text(user.email),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        _ProfileActionCard(
+          icon: Icons.person_outline,
+          title: 'Sunting Profil',
+          subtitle: 'Perbarui nama, email, dan nomor HP',
+          child: Column(
             children: [
-              CircleAvatar(
-                radius: 32,
-                backgroundImage: AssetImage(AppState.defaultUserAvatarPath),
+              _ProfileField(
+                label: 'Nama',
+                controller: _nameController,
+                readOnly: false,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.name,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(user.email),
-                  ],
+              _ProfileField(
+                label: 'Email',
+                controller: _emailController,
+                readOnly: false,
+              ),
+              _ProfileField(
+                label: 'Nomor HP',
+                controller: _phoneController,
+                readOnly: false,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _saveProfile,
+                  child: const Text('Simpan Profil'),
                 ),
-              ),
-              IconButton(
-                icon: Icon(_isEditingProfile ? Icons.close : Icons.edit),
-                onPressed: () => setState(() {
-                  _isEditingProfile = !_isEditingProfile;
-                }),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _ProfileField(
-            label: 'Nama',
-            controller: _nameController,
-            readOnly: !_isEditingProfile,
-          ),
-          _ProfileField(
-            label: 'Email',
-            controller: _emailController,
-            readOnly: !_isEditingProfile,
-          ),
-          _ProfileField(
-            label: 'Nomor HP',
-            controller: _phoneController,
-            readOnly: !_isEditingProfile,
-          ),
-          if (_isEditingProfile)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _saveProfile,
-                child: const Text('Simpan Profil'),
+        ),
+        const SizedBox(height: 16),
+        _ProfileActionCard(
+          icon: Icons.lock_outline,
+          title: 'Kata Sandi',
+          subtitle: 'Ganti kata sandi akunmu',
+          child: Column(
+            children: [
+              TextField(
+                controller: _oldPasswordController,
+                decoration: const InputDecoration(
+                  labelText: 'Kata sandi lama',
+                ),
+                obscureText: true,
               ),
-            ),
-          const SizedBox(height: 24),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Ganti Kata Sandi',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _oldPasswordController,
-            decoration: const InputDecoration(
-              labelText: 'Kata sandi lama',
-            ),
-            obscureText: true,
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _newPasswordController,
-            decoration: const InputDecoration(
-              labelText: 'Kata sandi baru',
-            ),
-            obscureText: true,
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _confirmPasswordController,
-            decoration: const InputDecoration(
-              labelText: 'Konfirmasi kata sandi baru',
-            ),
-            obscureText: true,
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _handleChangePassword,
-              child: const Text('Simpan Kata Sandi'),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Manajemen Perangkat',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          const SizedBox(height: 8),
-          ..._devices.map(
-            (device) => Card(
-              child: ListTile(
-                leading: const Icon(Icons.devices_outlined),
-                title: Text(device['name']!),
-                subtitle: Text('Login terakhir: ${device['lastLogin']}'),
-                trailing: const Icon(Icons.logout),
-                onTap: () => _handleDeviceTap(device['name']!),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _newPasswordController,
+                decoration: const InputDecoration(
+                  labelText: 'Kata sandi baru',
+                ),
+                obscureText: true,
               ),
-            ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _confirmPasswordController,
+                decoration: const InputDecoration(
+                  labelText: 'Konfirmasi kata sandi baru',
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _handleChangePassword,
+                  child: const Text('Simpan Kata Sandi'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        _ProfileActionCard(
+          icon: Icons.devices_other_outlined,
+          title: 'Manajemen Perangkat',
+          subtitle: 'Kelola perangkat yang pernah login',
+          child: Column(
+            children: _devices
+                .map(
+                  (device) => ListTile(
+                    leading: const Icon(Icons.devices_outlined),
+                    title: Text(device['name']!),
+                    subtitle: Text('Login terakhir: ${device['lastLogin']}'),
+                    trailing: const Icon(Icons.logout),
+                    onTap: () => _handleDeviceTap(device['name']!),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProfileActionCard extends StatefulWidget {
+  const _ProfileActionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.child,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Widget child;
+
+  @override
+  State<_ProfileActionCard> createState() => _ProfileActionCardState();
+}
+
+class _ProfileActionCardState extends State<_ProfileActionCard> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ExpansionTile(
+        leading: Icon(widget.icon),
+        title: Text(widget.title),
+        subtitle: Text(widget.subtitle),
+        initiallyExpanded: _expanded,
+        onExpansionChanged: (value) => setState(() => _expanded = value),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: widget.child,
           ),
         ],
       ),
