@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+
+import '../app_state.dart';
+import '../models/user.dart';
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  static const routeName = '/profile';
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  bool _isEditing = false;
+  User? _lastUser;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final appState = AppStateScope.of(context);
+    final user = appState.currentUser ?? appState.registeredUser;
+    if (user != null && user != _lastUser) {
+      _lastUser = user;
+      _nameController.text = user.name;
+      _emailController.text = user.email;
+      _phoneController.text = user.phone;
+    }
+  }
+
+  void _saveProfile() {
+    final appState = AppStateScope.of(context);
+    appState.updateProfile(
+      name: _nameController.text,
+      email: _emailController.text,
+      phone: _phoneController.text,
+    );
+    setState(() => _isEditing = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Profil berhasil diperbarui.')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = AppStateScope.of(context);
+    final user = appState.currentUser ?? appState.registeredUser;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profil Pengguna'),
+        actions: [
+          if (user != null)
+            IconButton(
+              icon: Icon(_isEditing ? Icons.close : Icons.edit),
+              onPressed: () {
+                setState(() => _isEditing = !_isEditing);
+              },
+            ),
+        ],
+      ),
+      body: user == null
+          ? const Center(
+              child: Text('Belum ada data pengguna. Silakan login.'),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  _ProfileField(
+                    label: 'Nama',
+                    controller: _nameController,
+                    isEditing: _isEditing,
+                  ),
+                  _ProfileField(
+                    label: 'Email',
+                    controller: _emailController,
+                    isEditing: _isEditing,
+                  ),
+                  _ProfileField(
+                    label: 'Nomor HP',
+                    controller: _phoneController,
+                    isEditing: _isEditing,
+                  ),
+                  const SizedBox(height: 24),
+                  if (_isEditing)
+                    ElevatedButton(
+                      onPressed: _saveProfile,
+                      child: const Text('Simpan Perubahan'),
+                    ),
+                ],
+              ),
+            ),
+    );
+  }
+}
+
+class _ProfileField extends StatelessWidget {
+  const _ProfileField({
+    required this.label,
+    required this.controller,
+    required this.isEditing,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final bool isEditing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        readOnly: !isEditing,
+      ),
+    );
+  }
+}
