@@ -58,12 +58,29 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Halo, $userName',
-              style: Theme.of(context).textTheme.titleLarge,
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 28,
+                  backgroundImage:
+                      AssetImage(AppState.defaultUserAvatarPath),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Halo, $userName',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 4),
+                      const Text('Pilih layanan yang kamu butuhkan'),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            const Text('Pilih layanan yang kamu butuhkan'),
             const SizedBox(height: 16),
             Expanded(
               child: GridView.count(

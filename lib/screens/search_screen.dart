@@ -100,6 +100,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       itemBuilder: (context, index) {
                         final medicine = _results[index];
                         return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: AssetImage(medicine.imagePath),
+                          ),
                           title: Text(medicine.name),
                           onTap: () => _handleMedicineTap(medicine),
                           trailing: const Icon(Icons.arrow_forward_ios, size: 16),

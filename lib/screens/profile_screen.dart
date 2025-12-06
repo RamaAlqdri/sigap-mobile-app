@@ -99,6 +99,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(16),
               child: ListView(
                 children: [
+                  Center(
+                    child: CircleAvatar(
+                      radius: 48,
+                      backgroundImage:
+                          AssetImage(AppState.defaultUserAvatarPath),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   _ProfileField(
                     label: 'Nama',
                     controller: _nameController,

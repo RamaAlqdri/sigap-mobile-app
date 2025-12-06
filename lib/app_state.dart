@@ -7,6 +7,8 @@ import 'models/prescription_item.dart';
 import 'models/user.dart';
 
 class AppState extends ChangeNotifier {
+  static const String defaultUserAvatarPath = 'assets/images/user_default.png';
+
   AppState._internal() {
     doctors = [
       const Doctor(
@@ -14,36 +16,72 @@ class AppState extends ChangeNotifier {
         name: 'Dr. Maya Pratiwi',
         specialty: 'Penyakit Dalam',
         whatsappNumber: '+628111222333',
+        photoPath: 'assets/images/doctor1.jpg',
       ),
       const Doctor(
         id: 'd2',
         name: 'Dr. Aditia Nugraha',
         specialty: 'Dokter Umum',
         whatsappNumber: '+6281234567890',
+        photoPath: 'assets/images/doctor2.jpg',
       ),
       const Doctor(
         id: 'd3',
         name: 'Dr. Ratna Dewi',
         specialty: 'Anak',
         whatsappNumber: '+628987654321',
+        photoPath: 'assets/images/doctor3.jpg',
       ),
       const Doctor(
         id: 'd4',
         name: 'Dr. Fajar Maulana',
         specialty: 'Kulit dan Kelamin',
         whatsappNumber: '+628135791113',
+        photoPath: 'assets/images/doctor_placeholder.png',
       ),
     ];
 
     medicines = const [
-      Medicine(id: 'm1', name: 'Paracetamol 500 mg'),
-      Medicine(id: 'm2', name: 'Vitamin C 500 mg'),
-      Medicine(id: 'm3', name: 'Ibuprofen 400 mg'),
-      Medicine(id: 'm4', name: 'Amoxicillin 500 mg'),
-      Medicine(id: 'm5', name: 'Cetirizine 10 mg'),
-      Medicine(id: 'm6', name: 'Ambroxol 30 mg'),
-      Medicine(id: 'm7', name: 'Lansoprazole 30 mg'),
-      Medicine(id: 'm8', name: 'Zinc 20 mg'),
+      Medicine(
+        id: 'm1',
+        name: 'Paracetamol 500 mg',
+        imagePath: 'assets/images/medicine_pain.png',
+      ),
+      Medicine(
+        id: 'm2',
+        name: 'Vitamin C 500 mg',
+        imagePath: 'assets/images/medicine_vitamin.png',
+      ),
+      Medicine(
+        id: 'm3',
+        name: 'Ibuprofen 400 mg',
+        imagePath: 'assets/images/medicine_pain.png',
+      ),
+      Medicine(
+        id: 'm4',
+        name: 'Amoxicillin 500 mg',
+        imagePath: 'assets/images/medicine_general.png',
+      ),
+      Medicine(
+        id: 'm5',
+        name: 'Cetirizine 10 mg',
+        imagePath: 'assets/images/medicine_general.png',
+      ),
+      Medicine(
+        id: 'm6',
+        name: 'Ambroxol 30 mg',
+        imagePath: 'assets/images/medicine_general.png',
+      ),
+      Medicine(
+        id: 'm7',
+        name: 'Lansoprazole 30 mg',
+        imagePath: 'assets/images/medicine_general.png',
+      ),
+      Medicine(
+        id: 'm8',
+        name: 'Zinc 20 mg',
+        imagePath: 'assets/images/medicine_vitamin.png',
+      ),
     ];
   }
 
@@ -69,6 +107,7 @@ class AppState extends ChangeNotifier {
   List<String> get searchHistory => List.unmodifiable(_searchHistory);
   List<String> get clickedMedicines => List.unmodifiable(_clickedMedicines);
   int get totalSearches => _searchCount;
+  String get userAvatarPath => defaultUserAvatarPath;
 
   void registerUser(User user) {
     _registeredUser = user.copy();
