@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_state.dart';
 import '../models/user.dart';
 import '../utils/validators.dart';
+import '../widgets/sigap_scaffold.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -78,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateScope.of(context);
     final user = appState.currentUser ?? appState.registeredUser;
-    return Scaffold(
+    return SigapScaffold(
       appBar: AppBar(
         title: const Text('Profil Pengguna'),
         actions: [
@@ -97,38 +98,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
             )
           : Padding(
               padding: const EdgeInsets.all(16),
-              child: ListView(
-                children: [
-                  Center(
-                    child: CircleAvatar(
-                      radius: 48,
-                      backgroundImage:
-                          AssetImage(AppState.defaultUserAvatarPath),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          Center(
+                            child: CircleAvatar(
+                              radius: 52,
+                              backgroundImage:
+                                  AssetImage(AppState.defaultUserAvatarPath),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              user.name,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          _ProfileField(
+                            label: 'Nama',
+                            controller: _nameController,
+                            isEditing: _isEditing,
+                          ),
+                          _ProfileField(
+                            label: 'Email',
+                            controller: _emailController,
+                            isEditing: _isEditing,
+                          ),
+                          _ProfileField(
+                            label: 'Nomor HP',
+                            controller: _phoneController,
+                            isEditing: _isEditing,
+                          ),
+                          const SizedBox(height: 24),
+                          if (_isEditing)
+                            ElevatedButton(
+                              onPressed: _saveProfile,
+                              child: const Text('Simpan Perubahan'),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  _ProfileField(
-                    label: 'Nama',
-                    controller: _nameController,
-                    isEditing: _isEditing,
-                  ),
-                  _ProfileField(
-                    label: 'Email',
-                    controller: _emailController,
-                    isEditing: _isEditing,
-                  ),
-                  _ProfileField(
-                    label: 'Nomor HP',
-                    controller: _phoneController,
-                    isEditing: _isEditing,
-                  ),
-                  const SizedBox(height: 24),
-                  if (_isEditing)
-                    ElevatedButton(
-                      onPressed: _saveProfile,
-                      child: const Text('Simpan Perubahan'),
-                    ),
-                ],
+                ),
               ),
             ),
     );

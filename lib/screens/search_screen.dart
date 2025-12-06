@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../models/medicine.dart';
+import '../widgets/sigap_scaffold.dart';
 import 'medicine_detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -45,77 +46,175 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final appState = AppStateScope.of(context);
-    return Scaffold(
+    return SigapScaffold(
       appBar: AppBar(
         title: const Text('Pencarian Obat'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Ketik nama obat',
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        decoration: const InputDecoration(
+                          labelText: 'Ketik nama obat',
+                        ),
+                        onSubmitted: _performSearch,
+                      ),
                     ),
-                    onSubmitted: _performSearch,
-                  ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () => _performSearch(_controller.text),
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        child: Text('Cari'),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () => _performSearch(_controller.text),
-                  child: const Text('Cari'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text('Total pencarian: ${appState.totalSearches}'),
-            const SizedBox(height: 8),
-            Text(
-              'Riwayat pencarian: ${appState.searchHistory.isEmpty ? '-' : appState.searchHistory.join(', ')}',
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Riwayat obat yang dicari: ${appState.searchedMedicines.isEmpty ? '-' : appState.searchedMedicines.join(', ')}',
-            ),
-            const SizedBox(height: 16),
-            if (_currentQuery.isNotEmpty)
-              Text(
-                'Hasil untuk "$_currentQuery":',
-                style: Theme.of(context).textTheme.titleMedium,
               ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: _results.isEmpty
-                  ? const Center(child: Text('Tidak ada obat ditemukan.'))
-                  : ListView.separated(
-                      itemBuilder: (context, index) {
-                        final medicine = _results[index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: AssetImage(medicine.imagePath),
-                          ),
-                          title: Text(medicine.name),
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              MedicineDetailScreen.routeName,
-                              arguments: medicine,
-                            );
-                          },
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                        );
-                      },
-                      separatorBuilder: (_, __) => const Divider(height: 1),
-                      itemCount: _results.length,
+            ),
+            const SizedBox(height: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Statistik pencarian',
+                        style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      children: [
+                        _StatChip(
+                          label: 'Total pencarian',
+                          value: '${appState.totalSearches}',
+                        ),
+                        _StatChip(
+                          label: 'Riwayat pencarian',
+                          value: appState.searchHistory.isEmpty
+                              ? '-'
+                              : appState.searchHistory.join(', '),
+                        ),
+                        _StatChip(
+                          label: 'Obat terakhir dicari',
+                          value: appState.searchedMedicines.isEmpty
+                              ? '-'
+                              : appState.searchedMedicines.join(', '),
+                        ),
+                      ],
                     ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _results.isEmpty
+                      ? const Center(child: Text('Tidak ada obat ditemukan.'))
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (_currentQuery.isNotEmpty)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  'Hasil untuk "$_currentQuery"',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                            Expanded(
+                              child: ListView.separated(
+                                itemBuilder: (context, index) {
+                                  final medicine = _results[index];
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(medicine.imagePath),
+                                    ),
+                                    title: Text(medicine.name),
+                                    subtitle: Text(
+                                      medicine.description,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        MedicineDetailScreen.routeName,
+                                        arguments: medicine,
+                                      );
+                                    },
+                                    trailing: const Icon(Icons.chevron_right),
+                                  );
+                                },
+                                separatorBuilder: (_, __) =>
+                                    const Divider(height: 1),
+                                itemCount: _results.length,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  const _StatChip({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context)
+            .colorScheme
+            .primary
+            .withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(color: Colors.grey[700]),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
       ),
     );
   }

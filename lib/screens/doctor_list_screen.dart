@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../app_state.dart';
 import '../models/doctor.dart';
+import '../widgets/sigap_scaffold.dart';
 
 class DoctorListScreen extends StatelessWidget {
   const DoctorListScreen({super.key});
@@ -40,25 +41,23 @@ class DoctorListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final doctors = AppStateScope.of(context).doctors;
-    return Scaffold(
+    return SigapScaffold(
       appBar: AppBar(
         title: const Text('Daftar Dokter'),
       ),
-      body: ListView.builder(
+      body: ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: doctors.length,
         itemBuilder: (context, index) {
           final doctor = doctors[index];
           return Card(
-            margin: const EdgeInsets.only(bottom: 16),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Row(
                     children: [
                       CircleAvatar(
-                        radius: 32,
+                        radius: 34,
                         backgroundImage: AssetImage(doctor.photoPath),
                       ),
                       const SizedBox(width: 16),
@@ -70,32 +69,61 @@ class DoctorListScreen extends StatelessWidget {
                               doctor.name,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
-                            Text(
-                              doctor.specialty,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: Colors.grey[700]),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                doctor.specialty,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context).primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _handleConsult(context, doctor),
-                      icon: const Icon(Icons.chat),
-                      label: const Text('Konsultasi via WhatsApp'),
-                    ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Konsultasi langsung via WhatsApp',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Colors.grey[700]),
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () => _handleConsult(context, doctor),
+                        icon: const Icon(Icons.chat_bubble_outline),
+                        label: const Text('Hubungi'),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           );
         },
+        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        itemCount: doctors.length,
       ),
     );
   }

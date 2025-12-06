@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../models/consultation_session.dart';
+import '../widgets/sigap_scaffold.dart';
 
 class PrescriptionDetailScreen extends StatelessWidget {
   const PrescriptionDetailScreen({super.key, required this.session});
@@ -34,38 +35,54 @@ class PrescriptionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SigapScaffold(
       appBar: AppBar(
         title: const Text('Detail Resep'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              session.doctorName,
-              style: Theme.of(context).textTheme.titleLarge,
+            Card(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      session.doctorName,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 4),
+                    Text('Waktu konsultasi: ${session.formattedDate}'),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 4),
-            Text('Waktu konsultasi: ${session.formattedDate}'),
             const SizedBox(height: 16),
-            Text(
-              'Daftar Obat',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
             Expanded(
-              child: ListView.separated(
-                itemCount: session.items.length,
-                itemBuilder: (context, index) {
-                  final item = session.items[index];
-                  return ListTile(
-                    title: Text(item.medicineName),
-                    subtitle: Text(item.instruction),
-                  );
-                },
-                separatorBuilder: (_, __) => const Divider(height: 1),
+              child: Card(
+                child: ListView.separated(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: session.items.length,
+                  itemBuilder: (context, index) {
+                    final item = session.items[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.1),
+                        child: Text('${index + 1}'),
+                      ),
+                      title: Text(item.medicineName),
+                      subtitle: Text(item.instruction),
+                    );
+                  },
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                ),
               ),
             ),
             const SizedBox(height: 12),

@@ -43,17 +43,20 @@ class SigapApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: colorScheme,
-          scaffoldBackgroundColor: kBackgroundColor,
+          scaffoldBackgroundColor: Colors.transparent,
           appBarTheme: const AppBarTheme(
-            backgroundColor: kBackgroundColor,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
             surfaceTintColor: Colors.transparent,
             foregroundColor: Colors.black87,
             centerTitle: true,
           ),
           cardTheme: CardThemeData(
-            color: Colors.white,
+            color: Colors.white.withValues(alpha: 0.95),
+            elevation: 4,
+            margin: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
@@ -62,7 +65,7 @@ class SigapApp extends StatelessWidget {
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(18),
               ),
             ),
           ),
@@ -75,12 +78,23 @@ class SigapApp extends StatelessWidget {
             filled: true,
             fillColor: Colors.white,
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
             border: inputBorder,
             enabledBorder: inputBorder,
             focusedBorder: inputBorder.copyWith(
-              borderSide: const BorderSide(color: kButtonColor),
+              borderSide: const BorderSide(color: kButtonColor, width: 1.4),
             ),
+          ),
+          textTheme: ThemeData.light().textTheme.apply(
+                bodyColor: Colors.black87,
+                displayColor: Colors.black87,
+              ),
+          snackBarTheme: SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            backgroundColor: kButtonColor.withValues(alpha: 0.95),
           ),
         ),
         initialRoute: LoginScreen.routeName,

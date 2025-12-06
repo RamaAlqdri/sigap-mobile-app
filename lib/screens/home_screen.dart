@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_state.dart';
+import '../widgets/sigap_scaffold.dart';
 import 'consultation_history_screen.dart';
 import 'doctor_list_screen.dart';
 import 'profile_screen.dart';
@@ -49,56 +50,78 @@ class HomeScreen extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(
+    return SigapScaffold(
       appBar: AppBar(
         title: const Text('SIGAP'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 28,
-                  backgroundImage:
-                      AssetImage(AppState.defaultUserAvatarPath),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Halo, $userName',
-                        style: Theme.of(context).textTheme.titleLarge,
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 32,
+                      backgroundImage:
+                          AssetImage(AppState.defaultUserAvatarPath),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Halo, $userName',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Tetap siaga menjaga kesehatanmu dengan konsultasi online',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: Colors.grey[700]),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      const Text('Pilih layanan yang kamu butuhkan'),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 0.9,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                children: actions
-                    .map(
-                      (action) => _ActionCard(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final width = constraints.maxWidth;
+                  final crossAxisCount = width > 1100
+                      ? 4
+                      : width > 800
+                          ? 3
+                          : 2;
+                  return GridView.builder(
+                    itemCount: actions.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: width > 800 ? 1.1 : 0.95,
+                    ),
+                    itemBuilder: (context, index) {
+                      final action = actions[index];
+                      return _ActionCard(
                         action: action,
                         onTap: () => Navigator.pushNamed(
                           context,
                           action.routeName,
                         ),
-                      ),
-                    )
-                    .toList(),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -117,24 +140,38 @@ class _ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(action.icon, size: 36, color: Theme.of(context).primaryColor),
-              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  action.icon,
+                  size: 32,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              const SizedBox(height: 16),
               Text(
                 action.title,
                 style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 action.description,
                 style: Theme.of(context).textTheme.bodySmall,

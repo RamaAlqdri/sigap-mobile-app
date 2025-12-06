@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_state.dart';
+import '../widgets/sigap_scaffold.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -64,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SigapScaffold(
       appBar: AppBar(
         title: const Text('Pengaturan'),
       ),
@@ -73,52 +74,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Ganti Kata Sandi',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _oldPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Kata sandi lama',
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ganti Kata Sandi',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _oldPasswordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Kata sandi lama',
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _newPasswordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Kata sandi baru',
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Konfirmasi kata sandi baru',
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _handleChangePassword,
+                        child: const Text('Simpan Kata Sandi'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              obscureText: true,
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _newPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Kata sandi baru',
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _confirmPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Konfirmasi kata sandi baru',
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _handleChangePassword,
-              child: const Text('Simpan Kata Sandi'),
-            ),
-            const SizedBox(height: 32),
-            Text(
-              'Manajemen Perangkat',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            ..._devices.map(
-              (device) => Card(
-                child: ListTile(
-                  title: Text(device['name']!),
-                  subtitle: Text('Login terakhir: ${device['lastLogin']}'),
-                  trailing: const Icon(Icons.logout),
-                  onTap: () => _handleDeviceTap(device['name']!),
+            const SizedBox(height: 24),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Manajemen Perangkat',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    ..._devices.map(
+                      (device) => ListTile(
+                        leading: const Icon(Icons.devices_other),
+                        title: Text(device['name']!),
+                        subtitle: Text('Login terakhir: ${device['lastLogin']}'),
+                        trailing: const Icon(Icons.logout),
+                        onTap: () => _handleDeviceTap(device['name']!),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
