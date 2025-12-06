@@ -305,34 +305,34 @@ class _TipsCard extends StatelessWidget {
   }
 }
 
-class _DisclaimerCard extends StatelessWidget {
-  const _DisclaimerCard({required this.message});
+// class _DisclaimerCard extends StatelessWidget {
+//   const _DisclaimerCard({required this.message});
 
-  final String message;
+//   final String message;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF4E5),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFFFC27D)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.warning_amber_outlined, color: Color(0xFFDA8B00)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: double.infinity,
+//       padding: const EdgeInsets.all(18),
+//       decoration: BoxDecoration(
+//         color: const Color(0xFFFFF4E5),
+//         borderRadius: BorderRadius.circular(18),
+//         border: Border.all(color: const Color(0xFFFFC27D)),
+//       ),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           const Icon(Icons.warning_amber_outlined, color: Color(0xFFDA8B00)),
+//           const SizedBox(width: 12),
+//           Expanded(
+//             child: Text(
+//               message,
+//               style: Theme.of(context).textTheme.bodyMedium,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
