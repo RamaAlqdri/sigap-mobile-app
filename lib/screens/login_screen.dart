@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../utils/validators.dart';
-import '../widgets/auth_hero.dart';
 import '../widgets/sigap_app_bar.dart';
 import '../widgets/sigap_scaffold.dart';
 import 'home_screen.dart';
@@ -70,137 +69,89 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: const SigapAppBar(title: ''),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final maxWidth = constraints.maxWidth > 720 ? 520.0 : double.infinity;
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const AuthHero(
-                      title: 'Selamat datang kembali',
-                      subtitle:
-                          'Masuk untuk melanjutkan konsultasi dan pantau resep terbarumu.',
-                      imagePath: 'assets/images/doctor_vector.png',
-                      highlights: [
-                        'Resep tersimpan otomatis',
-                        'Konsultasi via WhatsApp',
-                        'Dokter profesional',
-                      ],
-                    ),
-                    const SizedBox(height: 28),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: Colors.black12),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x12000000),
-                            blurRadius: 18,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
+          final maxWidth = constraints.maxWidth > 600 ? 480.0 : double.infinity;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: maxWidth,
+                minHeight: constraints.maxHeight,
+              ),
+              child: Align(
+                alignment: const Alignment(0, -0.2),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        'Selamat datang di SIGAP',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        textAlign: TextAlign.center,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                'Masuk akun SIGAP',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(fontWeight: FontWeight.w700),
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                controller: _emailController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Email',
-                                  prefixIcon: Icon(Icons.mail_outline),
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                                validator: Validators.validateEmail,
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                controller: _passwordController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Kata Sandi',
-                                  prefixIcon: Icon(Icons.lock_outline),
-                                ),
-                                obscureText: true,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Kata sandi wajib diisi';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Fitur lupa kata sandi belum tersedia di prototipe.',
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Lupa kata sandi?'),
-                                ),
-                              ),
-                              if (_errorMessage != null)
-                                Text(
-                                  _errorMessage!,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              if (!appState.hasRegisteredUser)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Belum ada akun terdaftar. Silakan registrasi terlebih dahulu.',
-                                    style: TextStyle(color: Colors.orange),
-                                  ),
-                                ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: appState.hasRegisteredUser
-                                    ? _handleLogin
-                                    : null,
-                                child: const Text('Masuk ke SIGAP'),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Belum punya akun?',
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pushNamed(
-                                      context,
-                                      RegisterScreen.routeName,
-                                    ),
-                                    child: const Text('Daftar sekarang'),
-                                  ),
-                                ],
-                              ),
-                            ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'Masuk untuk melanjutkan konsultasi kesehatanmu',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: Colors.grey[700]),
+                      ),
+                      const SizedBox(height: 24),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: Validators.validateEmail,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Kata Sandi',
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Kata sandi wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      if (_errorMessage != null)
+                        Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      if (!appState.hasRegisteredUser)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 8),
+                          child: Text(
+                            'Belum ada akun terdaftar. Silakan registrasi terlebih dahulu.',
+                            style: TextStyle(color: Colors.orange),
                           ),
                         ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed:
+                            appState.hasRegisteredUser ? _handleLogin : null,
+                        child: const Text('Masuk'),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          RegisterScreen.routeName,
+                        ),
+                        child: const Text('Belum punya akun? Daftar'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
