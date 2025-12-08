@@ -67,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final appState = AppStateScope.of(context);
     return SigapScaffold(
       appBar: const SigapAppBar(title: ''),
+      applyContentPadding: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth > 600 ? 480.0 : double.infinity;

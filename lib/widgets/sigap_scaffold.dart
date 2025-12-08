@@ -24,30 +24,18 @@ class SigapScaffold extends StatelessWidget {
     if (applyContentPadding) {
       content = Padding(
         padding: contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: content,
       );
     }
     content = SafeArea(child: content);
 
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFFECF4E8),
-            Color(0xFFECF4E8),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: appBar,
-        body: content,
-        floatingActionButton: floatingActionButton,
-        bottomNavigationBar: bottomNavigationBar,
-      ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFECF4E8),
+      appBar: appBar,
+      body: content,
+      floatingActionButton: floatingActionButton,
+      bottomNavigationBar: bottomNavigationBar,
     );
   }
 }

@@ -63,6 +63,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return SigapScaffold(
       appBar: const SigapAppBar(title: 'SIGAP - Daftar'),
+      applyContentPadding: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final maxWidth = constraints.maxWidth > 640 ? 540.0 : double.infinity;

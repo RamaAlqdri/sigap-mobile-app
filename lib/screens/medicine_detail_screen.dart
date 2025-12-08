@@ -52,6 +52,7 @@ class MedicineDetailScreen extends StatelessWidget {
 
     return SigapScaffold(
       appBar: const SigapAppBar(title: 'Detail Obat'),
+      applyContentPadding: false,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(

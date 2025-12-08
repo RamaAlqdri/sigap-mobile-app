@@ -46,6 +46,7 @@ class PrescriptionDetailScreen extends StatelessWidget {
 
     return SigapScaffold(
       appBar: const SigapAppBar(title: 'Detail Resep'),
+      applyContentPadding: false,
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
