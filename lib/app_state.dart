@@ -1,8 +1,12 @@
-import 'package:flutter/widgets.dart';
+import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import 'models/consultation_session.dart';
 import 'models/doctor.dart';
+import 'models/facility.dart';
 import 'models/medicine.dart';
 import 'models/prescription_item.dart';
 import 'models/user.dart';
@@ -11,6 +15,54 @@ class AppState extends ChangeNotifier {
   static const String defaultUserAvatarPath = 'assets/images/user_default.png';
 
   AppState._internal() {
+    facilities = const [
+      Facility(
+        id: 'f1',
+        name: 'RS SIGAP Mataram',
+        type: 'Rumah Sakit',
+        latitude: -8.5872,
+        longitude: 116.1015,
+        address: 'Jl. Sehat No. 1, Mataram',
+        phone: '+62370600111',
+      ),
+      Facility(
+        id: 'f2',
+        name: 'Klinik Bahagia',
+        type: 'Klinik',
+        latitude: -8.589,
+        longitude: 116.104,
+        address: 'Jl. Kenanga No. 8, Mataram',
+        phone: '+62370600222',
+      ),
+      Facility(
+        id: 'f3',
+        name: 'Puskesmas Harmoni',
+        type: 'Puskesmas',
+        latitude: -8.583,
+        longitude: 116.097,
+        address: 'Jl. Melati No. 15, Mataram',
+        phone: '+62370600333',
+      ),
+      Facility(
+        id: 'f4',
+        name: 'Klinik SIGAP Care',
+        type: 'Klinik',
+        latitude: -8.581,
+        longitude: 116.11,
+        address: 'Jl. Cendana No. 21, Mataram',
+        phone: '+62370600444',
+      ),
+      Facility(
+        id: 'f5',
+        name: 'RS Kasih Ibu',
+        type: 'Rumah Sakit',
+        latitude: -8.592,
+        longitude: 116.109,
+        address: 'Jl. Wijaya Kusuma No. 2, Mataram',
+        phone: '+62370600555',
+      ),
+    ];
+
     doctors = [
       const Doctor(
         id: 'd1',
@@ -131,13 +183,18 @@ class AppState extends ChangeNotifier {
   }
 
   static final AppState instance = AppState._internal();
+  static const String adminWhatsAppNumber = '+6282273421481';
+
 
   User? _registeredUser;
   User? _currentUser;
   bool _hasSeenIntro = false;
   bool _initialized = false;
+  final double _userLatitude = -8.586;
+  final double _userLongitude = 116.100;
 
   late final List<Doctor> doctors;
+  late final List<Facility> facilities;
   late final List<Medicine> medicines;
 
   final List<ConsultationSession> _sessions = [];
@@ -310,6 +367,40 @@ class AppState extends ChangeNotifier {
         .toList();
   }
 
+  List<Facility> getNearestFacilities({int limit = 3}) {
+    final pairs = facilities
+        .map(
+          (facility) => (
+            facility: facility,
+            distance: _calculateDistanceTo(facility.latitude, facility.longitude),
+          ),
+        )
+        .toList()
+      ..sort((a, b) => a.distance.compareTo(b.distance));
+
+    return pairs.take(limit).map((pair) => pair.facility).toList();
+  }
+
+  double distanceToFacility(Facility facility) {
+    return _calculateDistanceTo(facility.latitude, facility.longitude);
+  }
+
+  Future<void> openAdminWhatsAppSupport(BuildContext context) async {
+    final message =
+        'Halo Admin SIGAP, saya ingin bertanya tentang penggunaan aplikasi.';
+    final url =
+        'whatsapp://send?phone=${adminWhatsAppNumber.replaceAll(RegExp('[^0-9+]'), '')}&text=${Uri.encodeComponent(message)}';
+    final messenger = ScaffoldMessenger.of(context);
+    final launched = await launchUrlString(url);
+    if (!launched) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Gagal membuka WhatsApp. Pastikan aplikasi terpasang.'),
+        ),
+      );
+    }
+  }
+
   List<PrescriptionItem> _buildDummyPrescriptionItems() {
     return const [
       PrescriptionItem(
@@ -326,6 +417,22 @@ class AppState extends ChangeNotifier {
       ),
     ];
   }
+
+  double _calculateDistanceTo(double lat, double lng) {
+    const double earthRadiusKm = 6371;
+    final double dLat = _degreesToRadians(lat - _userLatitude);
+    final double dLon = _degreesToRadians(lng - _userLongitude);
+
+    final double lat1 = _degreesToRadians(_userLatitude);
+    final double lat2 = _degreesToRadians(lat);
+
+    final double a = (sin(dLat / 2) * sin(dLat / 2)) +
+        (sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2));
+    final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return earthRadiusKm * c;
+  }
+
+  double _degreesToRadians(double degree) => degree * (pi / 180);
 }
 
 class AppStateScope extends InheritedNotifier<AppState> {

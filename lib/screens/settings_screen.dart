@@ -66,6 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = AppStateScope.of(context);
     return SigapScaffold(
       appBar: const SigapAppBar(title: 'Pengaturan'),
       body: SingleChildScrollView(
@@ -139,6 +140,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         trailing: const Icon(Icons.logout),
                         onTap: () => _handleDeviceTap(device['name']!),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Bantuan & Dukungan',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    ListTile(
+                      leading: const Icon(Icons.support_agent_outlined),
+                      title: const Text('Chat Admin SIGAP'),
+                      subtitle: const Text('Tersambung ke WhatsApp'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => appState.openAdminWhatsAppSupport(context),
                     ),
                   ],
                 ),

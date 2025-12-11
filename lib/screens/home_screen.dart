@@ -958,6 +958,12 @@ class _ProfileSettingsTab extends StatelessWidget {
             DeviceManagementScreen.routeName,
           ),
         ),
+        _ProfileActionTile(
+          icon: Icons.support_agent_outlined,
+          title: 'Hubungi Customer Service',
+          subtitle: 'Chat admin via WhatsApp',
+          onTap: () => appState.openAdminWhatsAppSupport(context),
+        ),
         const SizedBox(height: 16),
         SizedBox(
           width: double.infinity,
