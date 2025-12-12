@@ -161,7 +161,7 @@ class _DoctorsTabState extends State<_DoctorsTab> {
 
     final specialties = {
       'Penyakit Dalam': Icons.favorite_outline,
-      'Dokter Umum': Icons.local_hospital_outlined,
+      'Kandungan dan Kebidanan': Icons.local_hospital_outlined,
       'Anak': Icons.child_care_outlined,
       'Kulit dan Kelamin': Icons.spa_outlined,
     };
